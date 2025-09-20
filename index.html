@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order from Other Store</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #2b6cb0;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #2b6cb0;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-top: 1rem;
+    }
+    input, select, textarea {
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #total {
+      margin-top: 0.5rem;
+      font-weight: bold;
+      color: #2b6cb0;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.75rem;
+      background-color: #2b6cb0;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1a4a7a;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Order from Other Store</h1>
+</header>
+
+<main>
+  <h2>Choose Products</h2>
+  <form id="orderForm">
+    
+    <label for="store">Select Store:</label>
+    <select id="store" name="store" required>
+      <option value="">--Select Store--</option>
+      <option value="apple">Apple</option>
+      <option value="flipkart">Flipkart</option>
+      <option value="amazon">Amazon</option>
+    </select>
+
+    <label for="product">Select Product:</label>
+    <select id="product" name="product" required>
+      <option value="">--Select Product--</option>
+    </select>
+
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+
+    <div id="total">Total: $0.00</div>
+
+    <label for="buyerName">Your Name:</label>
+    <input type="text" id="buyerName" name="buyerName" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="address">Delivery Address:</label>
+    <textarea id="address" name="address" rows="3" required></textarea>
+
+    <button type="submit">Place Order</button>
+  </form>
+</main>
+
+<script>
+  const productsByStore = {
+    apple: [
+      {name: "iPhone 15", price: 999},
+      {name: "MacBook Pro", price: 1999},
+      {name: "iPad Air", price: 599}
+    ],
+    flipkart: [
+      {name: "Samsung Galaxy S23", price: 899},
+      {name: "OnePlus 12", price: 749},
+      {name: "Redmi Note 13", price: 299}
+    ],
+    amazon: [
+      {name: "Echo Dot", price: 49},
+      {name: "Kindle Paperwhite", price: 129},
+      {name: "Fire TV Stick", price: 39}
+    ]
+  };
+
+  const storeSelect = document.getElementById('store');
+  const productSelect = document.getElementById('product');
+  const quantityInput = document.getElementById('quantity');
+  const totalDiv = document.getElementById('total');
+
+  let selectedPrice = 0;
+
+  storeSelect.addEventListener('change', function() {
+    const selectedStore = this.value;
+    productSelect.innerHTML = '<option value="">--Select Product--</option>';
+    selectedPrice = 0;
+    updateTotal();
+
+    if (selectedStore && productsByStore[selectedStore]) {
+      productsByStore[selectedStore].forEach(product => {
+        const option = document.createElement('option');
+        option.value = product.name;
+        option.textContent = `${product.name} - $${product.price}`;
+        option.dataset.price = product.price;
+        productSelect.appendChild(option);
+      });
+    }
+  });
+
+  productSelect.addEventListener('change', function() {
+    selectedPrice = parseFloat(this.selectedOptions[0].dataset.price || 0);
+    updateTotal();
+  });
+
+  quantityInput.addEventListener('input', updateTotal);
+
+  function updateTotal() {
+    const quantity = parseInt(quantityInput.value) || 1;
+    const total = selectedPrice * quantity;
+    totalDiv.textContent = `Total: $${total.toFixed(2)}`;
+  }
+
+  document.getElementById('orderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert("Order submitted successfully!\nCheck console for order details.");
+    console.log({
+      store: storeSelect.value,
+      product: productSelect.value,
+      quantity: quantityInput.value,
+      total: totalDiv.textContent,
+      name: document.getElementById('buyerName').value,
+      email: document.getElementById('email').value,
+      address: document.getElementById('address').value
+    });
+  });
+</script>
+
+</body>
+</html>
